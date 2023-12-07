@@ -51,6 +51,7 @@ class Settings(object):
     def __init__(self):
         # Set defaults
         self.AUDIENCE = None  # Required
+        self.ALLOWED_ISSUER = None  # Required
         self.BLOCK_GUEST_USERS = False
         self.BOOLEAN_CLAIM_MAPPING = {}
         self.CA_BUNDLE = True
@@ -81,6 +82,7 @@ class Settings(object):
         self.SCOPES = []
 
         required_settings = [
+            "ALLOWED_ISSUER",
             "AUDIENCE",
             "CLIENT_ID",
             "RELYING_PARTY_ID",
@@ -268,7 +270,7 @@ class ProviderConfig(object):
             self.token_endpoint = openid_cfg["token_endpoint"]
             self.end_session_endpoint = openid_cfg["end_session_endpoint"]
             if settings.TENANT_ID != 'adfs':
-                self.issuer = openid_cfg["issuer"]
+                self.issuer = [f"https://sts.windows.net/{issuer}/" for issuer in settings.ALLOWED_ISSUER]
                 self.msgraph_endpoint = openid_cfg["msgraph_host"]
             else:
                 self.issuer = openid_cfg["access_token_issuer"]
